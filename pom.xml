@@ -69,7 +69,13 @@
                   <descriptorRef>artifact</descriptorRef>
                 </assembly>
                 <entryPoint>
-                  <shell>java -jar /opt/${project.artifactId}/${project.build.finalName}.jar</shell>
+                  <exec>
+                    <args>java</args>
+                    <args>-jar</args>
+                    <args>
+                      /opt/${project.artifactId}/${project.build.finalName}.jar
+                    </args>
+                  </exec>
                 </entryPoint>
               </build>
             </image>
