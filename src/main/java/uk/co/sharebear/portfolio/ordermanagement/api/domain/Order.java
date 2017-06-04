@@ -10,7 +10,7 @@ import lombok.Value;
 @Value
 public class Order {
   UUID orderId;
-  Integer version;
+  Option<Integer> version;
   String name;
   String phoneNumber;
   String email;

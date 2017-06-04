@@ -6,13 +6,16 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import uk.co.sharebear.portfolio.ordermanagement.api.domain.Order;
 import uk.co.sharebear.portfolio.ordermanagement.api.library.sparkjava.SparkjavaRule;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import javaslang.collection.List;
 import javaslang.control.Option;
@@ -23,6 +26,11 @@ import static com.mashape.unirest.http.Unirest.post;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
+import static uk.co.sharebear.portfolio.ordermanagement.api.domain.MovingService.MOVING;
 import static uk.co.sharebear.portfolio.ordermanagement.api.library.sparkjava.JsonTransformer.toJson;
 
 public class OrderManagementEndpointTest {
@@ -30,16 +38,25 @@ public class OrderManagementEndpointTest {
   @ClassRule
   public static final SparkjavaRule spark = new SparkjavaRule();
 
+  private static final OrderManagementService mockService = mock(OrderManagementService.class);
+
   @BeforeClass
   public static void configureEndpoint() {
     // consider moving this to the SparkjavaRule by making use of a functional interface. This
     // would enable moving awaitInitialization into common code.
-    OrderManagementEndpoint.configure();
+    OrderManagementEndpoint.configure(mockService);
     Spark.awaitInitialization();
+  }
+
+  @After
+  public void resetMocks() {
+    reset(mockService);
   }
 
   @Test
   public void shouldExposeEndpointForListingAllOrders() throws UnirestException {
+    when(mockService.getOrders()).thenReturn(List.of(testOrder()));
+
     final HttpResponse<JsonNode> response = get(spark.url("/ordermanagement/orders")).asJson();
 
     assertThat(response.getStatus(), is(equalTo(200)));
@@ -49,6 +66,8 @@ public class OrderManagementEndpointTest {
 
   @Test
   public void shouldExposeEndpointForCreatingAnOrder() throws Exception {
+    when(mockService.createOrder(any(CreateOrderRequest.class))).thenReturn(createOrderResponse());
+
     final HttpResponse<JsonNode> response =
         post(spark.url("/ordermanagement/orders/create"))
             .body(toJson(createOrderRequest()))
@@ -56,10 +75,6 @@ public class OrderManagementEndpointTest {
 
     assertThat(response.getStatus(), is(equalTo(201)));
     assertThat(getJsonApiDataAsObject(response).has("orderId"), is(true));
-  }
-
-  private CreateOrderRequest createOrderRequest() {
-    return new CreateOrderRequest("", "", "", "", "", List.empty(), LocalDate.now(), Option.none());
   }
 
   private JSONArray getJsonApiDataAsArray(HttpResponse<JsonNode> response) {
@@ -80,5 +95,28 @@ public class OrderManagementEndpointTest {
     assertThat("Response body must not contain aan errors key",
         response.getBody().getObject().has("errors"), is(false)
     );
+  }
+
+  private Order testOrder() {
+    return new Order(
+        UUID.randomUUID(),
+        Option.of(1),
+        "Jonathan Share",
+        "83212343",
+        "jonny@someplace.co.uk",
+        "Old address 3, 4532 Nowhere",
+        "New address 42, 9843 Anywhere",
+        List.of(MOVING),
+        LocalDate.of(2017, 5, 25),
+        Option.none()
+    );
+  }
+
+  private CreateOrderRequest createOrderRequest() {
+    return new CreateOrderRequest("", "", "", "", "", List.empty(), LocalDate.now(), Option.none());
+  }
+
+  private CreateOrderResponse createOrderResponse() {
+    return new CreateOrderResponse(UUID.randomUUID());
   }
 }
