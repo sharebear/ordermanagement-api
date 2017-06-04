@@ -19,4 +19,19 @@ public class Order {
   List<MovingService> services;
   LocalDate executionDate;
   Option<String> comments;
+
+  public Order withVersion(Integer newVersion) {
+    return new Order(
+        orderId,
+        Option.of(newVersion),
+        name,
+        phoneNumber,
+        email,
+        fromAddress,
+        toAddress,
+        services,
+        executionDate,
+        comments
+    );
+  }
 }
