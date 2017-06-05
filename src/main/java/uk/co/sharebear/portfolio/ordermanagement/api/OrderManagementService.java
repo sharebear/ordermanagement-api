@@ -37,4 +37,7 @@ class OrderManagementService {
     return repository.getOrders();
   }
 
+  Order getOrder(String orderId) {
+    return repository.getOrder(orderId);
+  }
 }

@@ -32,6 +32,10 @@ class OrderManagementRepository {
     return List.ofAll(result).map(this::createOrderFromItem);
   }
 
+  Order getOrder(String orderId) {
+    return createOrderFromItem(ordersTable.getItem("orderId", orderId));
+  }
+
   private Order createOrderFromItem(Item item) {
     return new Order(
         UUID.fromString(item.getString("orderId")),
@@ -79,5 +83,4 @@ class OrderManagementRepository {
     }
     return item;
   }
-
 }

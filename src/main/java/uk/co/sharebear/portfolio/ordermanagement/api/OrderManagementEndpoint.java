@@ -26,6 +26,10 @@ class OrderManagementEndpoint {
 
     path("/ordermanagement/", () -> {
       get("/orders", (req, res) -> data(service.getOrders()), JsonTransformer::toJson);
+      get("/orders/:orderId", (req, res) -> {
+        final String orderId = req.params("orderId");
+        return data(service.getOrder(orderId));
+      }, JsonTransformer::toJson);
       post("/orders/create", (req, res) -> {
         final CreateOrderRequest request = fromJson(req.body(), CreateOrderRequest.class);
         final CreateOrderResponse response = service.createOrder(request);
