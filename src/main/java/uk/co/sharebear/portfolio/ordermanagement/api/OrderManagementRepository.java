@@ -65,7 +65,8 @@ class OrderManagementRepository {
 
   private Item createItemFromOrder(Order order) {
     final Item item = new Item()
-        .withPrimaryKey("orderId", order.getOrderId().toString(), "version", order.getVersion().get())
+        .withPrimaryKey("orderId", order.getOrderId().toString())
+        .withNumber("version", order.getVersion().get())
         .withString("name", order.getName())
         .withString("phoneNumber", order.getPhoneNumber())
         .withString("email", order.getEmail())
