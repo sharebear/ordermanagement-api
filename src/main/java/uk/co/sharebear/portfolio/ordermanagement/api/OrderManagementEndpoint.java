@@ -4,6 +4,7 @@ import uk.co.sharebear.portfolio.ordermanagement.api.library.sparkjava.JsonTrans
 
 import static spark.Spark.before;
 import static spark.Spark.get;
+import static spark.Spark.options;
 import static spark.Spark.path;
 import static spark.Spark.post;
 import static uk.co.sharebear.portfolio.ordermanagement.api.library.jsonapi.DataDocument.data;
@@ -14,6 +15,14 @@ class OrderManagementEndpoint {
   private static final int CREATED = 201;
 
   static void configure(OrderManagementService service) {
+
+    before((req, res) -> {
+      res.header("Access-Control-Allow-Headers", "Authorization, Content-Type");
+      res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+      res.header("Access-Control-Allow-Origin", "*");
+    });
+    options("/*", (req, res) -> "");
+
     before((req, res) -> {
       res.type(JSON_CONTENT_TYPE);
     });
