@@ -17,15 +17,12 @@ class OrderManagementEndpoint {
   static void configure(OrderManagementService service) {
 
     before((req, res) -> {
+      res.type(JSON_CONTENT_TYPE);
       res.header("Access-Control-Allow-Headers", "Authorization, Content-Type");
       res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
       res.header("Access-Control-Allow-Origin", "*");
     });
     options("/*", (req, res) -> "");
-
-    before((req, res) -> {
-      res.type(JSON_CONTENT_TYPE);
-    });
 
     path("/ordermanagement/", () -> {
       get("/orders", (req, res) -> data(service.getOrders()), JsonTransformer::toJson);
