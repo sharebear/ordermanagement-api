@@ -41,4 +41,12 @@ class OrderManagementService {
     return repository.findOrder(orderId)
         .getOrElseThrow(IllegalArgumentException::new);
   }
+
+  void updateOrder(String orderId, UpdateOrderRequest request) {
+    final Option<Order> orderOption = repository.findOrder(orderId);
+    final Order updatedOrder = orderOption
+        .map(order -> order.apply(request))
+        .getOrElseThrow(IllegalArgumentException::new);
+    repository.save(updatedOrder);
+  }
 }

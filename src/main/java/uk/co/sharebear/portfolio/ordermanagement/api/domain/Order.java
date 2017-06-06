@@ -1,5 +1,7 @@
 package uk.co.sharebear.portfolio.ordermanagement.api.domain;
 
+import uk.co.sharebear.portfolio.ordermanagement.api.UpdateOrderRequest;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -34,4 +36,20 @@ public class Order {
         comments
     );
   }
+
+  public Order apply(UpdateOrderRequest request) {
+    return new Order(
+        orderId,
+        Option.of(request.getVersion()),
+        request.getName(),
+        request.getPhoneNumber(),
+        request.getEmail(),
+        request.getFromAddress(),
+        request.getToAddress(),
+        request.getServices(),
+        request.getExecutionDate(),
+        request.getComments()
+    );
+  }
+
 }
