@@ -38,6 +38,7 @@ class OrderManagementService {
   }
 
   Order getOrder(String orderId) {
-    return repository.getOrder(orderId);
+    return repository.findOrder(orderId)
+        .getOrElseThrow(IllegalArgumentException::new);
   }
 }

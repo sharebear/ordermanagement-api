@@ -29,14 +29,15 @@ class OrderManagementRepository {
 
   List<Order> getOrders() {
     final ItemCollection<ScanOutcome> result = ordersTable.scan();
-    return List.ofAll(result).map(this::createOrderFromItem);
+    return List.ofAll(result).map(OrderManagementRepository::createOrderFromItem);
   }
 
-  Order getOrder(String orderId) {
-    return createOrderFromItem(ordersTable.getItem("orderId", orderId));
+  Option<Order> findOrder(String orderId) {
+    final Item item = ordersTable.getItem("orderId", orderId);
+    return Option.of(item).map(OrderManagementRepository::createOrderFromItem);
   }
 
-  private Order createOrderFromItem(Item item) {
+  private static Order createOrderFromItem(Item item) {
     return new Order(
         UUID.fromString(item.getString("orderId")),
         Option.of(item.getInt("version")),
