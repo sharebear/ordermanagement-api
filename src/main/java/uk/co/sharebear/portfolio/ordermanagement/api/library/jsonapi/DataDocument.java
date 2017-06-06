@@ -6,10 +6,10 @@ import lombok.Value;
 
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class DataDocument {
-  Object data;
+public class DataDocument<T> {
+  T data;
 
-  public static DataDocument data(Object data) {
-    return new DataDocument(data);
+  public static <T> DataDocument<T> data(T data) {
+    return new DataDocument<>(data);
   }
 }
