@@ -12,6 +12,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import uk.co.sharebear.portfolio.ordermanagement.api.domain.Order;
+import uk.co.sharebear.portfolio.ordermanagement.api.library.jsonapi.DataDocument;
 import uk.co.sharebear.portfolio.ordermanagement.api.library.sparkjava.SparkjavaRule;
 
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static uk.co.sharebear.portfolio.ordermanagement.api.domain.MovingService.MOVING;
+import static uk.co.sharebear.portfolio.ordermanagement.api.library.jsonapi.DataDocument.data;
 import static uk.co.sharebear.portfolio.ordermanagement.api.library.sparkjava.JsonTransformer.toJson;
 
 public class OrderManagementEndpointTest {
@@ -112,8 +114,10 @@ public class OrderManagementEndpointTest {
     );
   }
 
-  private CreateOrderRequest createOrderRequest() {
-    return new CreateOrderRequest("", "", "", "", "", List.empty(), LocalDate.now(), Option.none());
+  private DataDocument<CreateOrderRequest> createOrderRequest() {
+    return data(
+        new CreateOrderRequest("", "", "", "", "", List.empty(), LocalDate.now(), Option.none())
+    );
   }
 
   private CreateOrderResponse createOrderResponse() {

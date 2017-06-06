@@ -1,5 +1,8 @@
 package uk.co.sharebear.portfolio.ordermanagement.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import uk.co.sharebear.portfolio.ordermanagement.api.library.jsonapi.DataDocument;
 import uk.co.sharebear.portfolio.ordermanagement.api.library.sparkjava.JsonTransformer;
 
 import static spark.Spark.before;
@@ -31,8 +34,12 @@ class OrderManagementEndpoint {
         return data(service.getOrder(orderId));
       }, JsonTransformer::toJson);
       post("/orders/create", (req, res) -> {
-        final CreateOrderRequest request = fromJson(req.body(), CreateOrderRequest.class);
-        final CreateOrderResponse response = service.createOrder(request);
+        final DataDocument<CreateOrderRequest> request = fromJson(
+            req.body(),
+            new TypeReference<DataDocument<CreateOrderRequest>>() {
+            }
+        );
+        final CreateOrderResponse response = service.createOrder(request.getData());
         res.status(CREATED);
         return data(response);
       }, JsonTransformer::toJson);
